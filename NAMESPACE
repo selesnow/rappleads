@@ -2,7 +2,7 @@
 
 export(apl_auth)
 export(apl_get_me_details)
-export(get_user_acl)
+export(apl_get_user_acl)
 import(httr2)
 import(tidyr)
 importFrom(dplyr,rename_with)

@@ -3,7 +3,7 @@
 #' @returns tibble
 #' @export
 #'
-get_user_acl <- function() {
+apl_get_user_acl <- function() {
 
   resp <- request("https://api.searchads.apple.com/api/v5/acls") %>%
     req_headers(
