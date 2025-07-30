@@ -14,7 +14,8 @@ get_user_acl <- function() {
   result <- resp %>%  resp_body_json()
 
   result <- tibble(data = result$data) %>%
-            unnest_wider(data)
+            unnest_wider(data) %>%
+            rename_with(.fn = to_snake_case)
 
   return(result)
 
