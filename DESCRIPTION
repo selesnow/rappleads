@@ -15,3 +15,5 @@ Imports:
     openssl,
     snakecase,
     tidyr
+URL: https://github.com/selesnow/rappleads
+BugReports: https://github.com/selesnow/rappleads/issues
