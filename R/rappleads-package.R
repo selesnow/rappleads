@@ -6,6 +6,5 @@
 #' @importFrom snakecase to_snake_case
 #' @import httr2
 #' @import tidyr
-#' @import jose
 ## usethis namespace: end
 NULL
