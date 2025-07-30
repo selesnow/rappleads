@@ -1,3 +1,51 @@
+#' Apple Ads Authorization
+#'
+#' @param client_id You receive your clientId when you upload a public key.
+#' @param team_id The client secret is a JWT that you create and sign with your private key.
+#' @param key_id The value is your keyId that returns when you upload a public key.
+#' @param private_key_path Path to the `.pem` file containing your private key.
+#' @param account_name Your apple ads account name
+#' @param cache_path Path to the directory where cached authentication data will be stored.
+#'
+#' @details
+#' This implementation process guides you through the following steps:
+#' 1. Invite users with API permissions.
+#' 2. Generate a private-public key pair.
+#' 3. Extract a public key from your persisted private key.
+#' 4. Upload a public key.
+#' 5. Set system environments variables.
+#' 6. Request an access token.
+#'
+#' ## Generate a Private Key
+#' API users need to create a private key. If you’re using MacOS or a UNIX-like operating system, OpenSSL works natively. If you’re on a Windows platform, you need to download [OpenSSL](https://www.openssl.org/).
+#' `openssl ecparam -genkey -name prime256v1 -noout -out private-key.pem`
+#'
+#' ## Extract a Public Key
+#' `openssl ec -in private-key.pem -pubout -out public-key.pem`
+#' Open the public-key.pem file in a text editor and copy the public key, including the begin and end lines.
+#'
+#' ## Upload a Public Key
+#' Follow these steps to upload your public key:
+#' 1. From the Ads UI, choose Account Settings > API. Paste the key created in the above section into the Public Key field.
+#' 2. Click Save. A group of credentials displays as a code block above the public key field. Use your clientId, teamId, and keyId to create a client secret.
+#'
+#' ## Set system environments variables
+#' Run `usethis::edit_r_environ()` and set variables:
+#' * APL_CLIENT_ID
+#' * APL_TEAM_ID
+#' * APL_KEY_ID
+#' * APL_PRIVATE_KEY_PATH
+#' * APL_ACCOUNT_NAME
+#'
+#' ## Request an access token.
+#' Once the environment variables listed above are set, no further action is required from you — any function from the package will automatically request and refresh the access token when executed.
+#'
+#' For more information see [API Oauth documentation](https://developer.apple.com/documentation/apple_ads/implementing-oauth-for-the-apple-search-ads-api).
+#'
+#'
+#' @returns character with access_token
+#' @export
+#'
 apl_auth <- function(
     client_id        = Sys.getenv('APL_CLIENT_ID'),
     team_id          = Sys.getenv('APL_TEAM_ID'),
@@ -66,6 +114,16 @@ apl_auth <- function(
 
 }
 
+#' Get client secret
+#'
+#' @param client_id You receive your clientId when you upload a public key.
+#' @param team_id The client secret is a JWT that you create and sign with your private key.
+#' @param key_id The value is your keyId that returns when you upload a public key.
+#' @param private_key_path Path to the `.pem` file containing your private key.
+#' @param account_name Your apple ads account name
+#' @param cache_path Path to the directory where cached authentication data will be stored.
+#'
+#' @returns jwt_data
 apl_get_client_secret <- function(
     client_id,
     team_id,
@@ -86,7 +144,7 @@ apl_get_client_secret <- function(
     kid = key_id
   )
 
-  payload <- jose::jwt_claim(
+  payload <- httr2::jwt_claim(
     sub = client_id,
     aud = "https://appleid.apple.com",
     iat = iat,
@@ -94,7 +152,7 @@ apl_get_client_secret <- function(
     iss = team_id
   )
 
-  jwt <- jwt_encode_sig(payload, key = private_key, header = header)
+  jwt <- httr2::jwt_encode_sig(payload, key = private_key, header = header)
 
   jwt_data <- list(jwt = jwt, exp = exp, iat = iat)
   saveRDS(jwt_data, jwt_cache_file)
@@ -103,6 +161,14 @@ apl_get_client_secret <- function(
 
 }
 
+#' Get access_token
+#'
+#' @param client_id You receive your clientId when you upload a public key.
+#' @param jwt_data JWT object `apl_get_client_secret()`
+#' @param account_name Your apple ads account name
+#' @param cache_path Path to the directory where cached authentication data will be stored.
+#'
+#' @returns access_token object
 apl_get_access_token <- function(
     client_id,
     jwt_data,
