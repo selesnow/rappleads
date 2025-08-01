@@ -149,6 +149,15 @@ apl_parse_ad_groups <- function(resp) {
 
 }
 
+apl_parse_ads <- function(resp) {
+
+  content <- resp_body_json(resp)
+
+  tibble(data = content$data) %>%
+    unnest_wider(data)
+
+}
+
 apl_parse_campaign_report <- function(resp) {
 
   content <- resp_body_json(resp)
@@ -175,6 +184,7 @@ apl_parsers <- list(
   simple          = apl_simple_parser,
   campaigns       = apl_parse_campaigns,
   ad_groups       = apl_parse_ad_groups,
+  ads             = apl_parse_ads,
   user_acl_parser = apl_user_acl_parser,
   campaign_report = apl_parse_campaign_report
 )
