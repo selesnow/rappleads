@@ -138,6 +138,17 @@ apl_parse_campaigns <- function(resp) {
 
 }
 
+apl_parse_ad_groups <- function(resp) {
+
+  content <- resp_body_json(resp)
+
+  tibble(data = content$data) %>%
+    unnest_wider(data) %>%
+    unnest_wider(defaultBidAmount, names_sep = '_') %>%
+    rename_with(.fn = to_snake_case)
+
+}
+
 apl_parse_campaign_report <- function(resp) {
 
   content <- resp_body_json(resp)
@@ -163,6 +174,7 @@ apl_parse_campaign_report <- function(resp) {
 apl_parsers <- list(
   simple          = apl_simple_parser,
   campaigns       = apl_parse_campaigns,
+  ad_groups       = apl_parse_ad_groups,
   user_acl_parser = apl_user_acl_parser,
   campaign_report = apl_parse_campaign_report
 )
