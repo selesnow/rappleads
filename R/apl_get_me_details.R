@@ -5,13 +5,10 @@
 #'
 apl_get_me_details <- function() {
 
-  resp <- request("https://api.searchads.apple.com/api/v5/me") %>%
-    req_headers(
-      Authorization = paste("Bearer", apl_auth())
-    ) %>%
-    req_perform()
-
-  result <- resp_body_json(resp)$data
+  result <- apl_make_request(
+    endpoint = 'me',
+    parser   = apl_parsers$simple
+  )
 
   return(result)
 
