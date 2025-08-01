@@ -4,7 +4,7 @@
 \alias{apl_get_campaigns}
 \title{Get all Campaigns}
 \usage{
-apl_get_campaigns(org_id)
+apl_get_campaigns(org_id = apl_get_me_details()$parentOrgId)
 }
 \arguments{
 \item{org_id}{The value is your orgId.}

@@ -4,7 +4,7 @@
 \alias{apl_get_budget_orders}
 \title{Get All Budget Orders}
 \usage{
-apl_get_budget_orders(org_id)
+apl_get_budget_orders(org_id = apl_get_me_details()$parentOrgId)
 }
 \arguments{
 \item{org_id}{The value is your orgId.}

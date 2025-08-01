@@ -5,7 +5,7 @@
 #' @returns tibble with campaigns
 #' @export
 #'
-apl_get_campaigns <- function(org_id) {
+apl_get_campaigns <- function(org_id = apl_get_me_details()$parentOrgId) {
 
   result <- apl_make_request(
     endpoint = 'campaigns',
