@@ -13,7 +13,9 @@ Imports:
     dplyr,
     httr2,
     openssl,
+    retry,
     snakecase,
+    stringr,
     tidyr
 URL: https://github.com/selesnow/rappleads
 BugReports: https://github.com/selesnow/rappleads/issues

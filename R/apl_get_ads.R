@@ -7,24 +7,11 @@
 #'
 apl_get_ads <- function(org_id = apl_get_me_details()$parentOrgId) {
 
-  selector <- list(
-    fields  = NULL,
-    orderBy = list(
-      list(
-        field     = "campaignId",
-        sortOrder = "ASCENDING"
-      )),
-    pagination = list(
-      offset = 0,
-      limit  = 1000
-    )
-  )
-
   result <- apl_make_request(
     endpoint = 'ads/find',
     org_id   = org_id,
     parser   = apl_parsers$ads,
-    selector = selector
+    selector = make_selector(sort_field = "campaignId", part = 'selector')
   )
 
   return(result)

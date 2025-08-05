@@ -11,7 +11,7 @@ apl_get_campaigns <- function(org_id = apl_get_me_details()$parentOrgId) {
     endpoint = 'campaigns',
     org_id   = org_id,
     parser   = apl_parsers$campaigns
-    )
+  )
 
   return(result)
 

@@ -25,10 +25,12 @@ apl_make_request <- function(
       limit  = 1000,
       offset = 0
     ) %>%
+    req_throttle(capacity = 10, fill_time_s = 5) %>%
     req_error(
       is_error = is_error,
       body     = error_body
-    )
+    ) %>%
+    req_retry(max_tries = 8)
 
   # payload
   if (!is.null(selector)) {
@@ -41,10 +43,15 @@ apl_make_request <- function(
   }
 
   # pagination
-  resps <- req_perform_iterative(
-    req,
-    next_req = next_req,
-    max_reqs = Inf
+  retry::retry(
+    resps <- req_perform_iterative(
+      req,
+      next_req = next_req,
+      max_reqs = Inf
+    ),
+    when      = "Could not evaluate cli|invalid format",
+    max_tries = 10,
+    interval  = 1
   )
 
   # parsing
@@ -54,6 +61,43 @@ apl_make_request <- function(
 
 }
 
+
+# make_request helpers ----------------------------------------------------
+make_selector <- function(
+    start_date  = Sys.Date() - 8,
+    end_date    = Sys.Date() - 1,
+    granularity = c('DAILY', 'HOURLY', 'WEEKLY', 'MONTHLY'),
+    sort_field  = "startTime",
+    part        = NULL
+  ) {
+
+  granularity <- match.arg(granularity, several.ok =  FALSE)
+
+  selector <- list(
+    startTime   = start_date,
+    endTime     = end_date,
+    granularity = granularity,
+    selector = list(
+      fields  = NULL,
+      orderBy = list(
+        list(
+          field     = sort_field,
+          sortOrder = "ASCENDING"
+        )),
+      pagination = list(
+        offset = 0,
+        limit  = 1000
+      )
+    )
+  )
+
+  if (!is.null(part)) {
+    selector <- selector[[part]]
+  }
+
+  selector
+
+}
 
 # error helpers -----------------------------------------------------------
 is_error <- function(resp) {
@@ -105,7 +149,6 @@ next_req_post <- function(resp, req) {
     )
   )
 }
-
 
 # Parsers -----------------------------------------------------------------
 apl_simple_parser <- function(resp) {
@@ -180,11 +223,34 @@ apl_parse_campaign_report <- function(resp) {
 
 }
 
+apl_parse_ad_group_report <- function(resp) {
+
+  content <- resp_body_json(resp)
+
+  res <- tibble(data = content$data$reportingDataResponse$row) %>%
+    unnest_wider('data') %>%
+    unnest_wider('metadata') %>%
+    unnest_longer('granularity') %>%
+    unnest_wider('granularity')
+
+  fields <- c('defaultBidAmount')
+
+  for (field in fields) {
+    if (!field %in% names(res)) next
+    res <- unnest_wider(res, all_of(field), names_sep = "_")
+  }
+
+  res <- rename_with(res, .fn = to_snake_case)
+  res
+
+}
+
 apl_parsers <- list(
   simple          = apl_simple_parser,
   campaigns       = apl_parse_campaigns,
   ad_groups       = apl_parse_ad_groups,
   ads             = apl_parse_ads,
   user_acl_parser = apl_user_acl_parser,
-  campaign_report = apl_parse_campaign_report
+  campaign_report = apl_parse_campaign_report,
+  ad_group_report = apl_parse_ad_group_report
 )

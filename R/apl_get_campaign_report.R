@@ -15,30 +15,10 @@ apl_get_campaign_report <- function(
   granularity = c('DAILY', 'HOURLY', 'WEEKLY', 'MONTHLY')
 ){
 
-  granularity <- match.arg(granularity, several.ok =  FALSE)
-
-  selector <- list(
-    startTime   = start_date,
-    endTime     = end_date,
-    granularity = granularity,
-    selector = list(
-      fields  = NULL,
-      orderBy = list(
-        list(
-          field     = "startTime",
-          sortOrder = "ASCENDING"
-        )),
-      pagination = list(
-        offset = 0,
-        limit  = 1000
-      )
-    )
-  )
-
   result <- apl_make_request(
     endpoint = 'reports/campaigns',
     org_id   = org_id,
-    selector = selector,
+    selector = make_selector(start_date, end_date, granularity),
     parser   = apl_parsers$campaign_report
   )
 
