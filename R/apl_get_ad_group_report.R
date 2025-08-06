@@ -1,4 +1,4 @@
-#' Get Ad Group -Level Reports
+#' Get Ad Group-Level Reports
 #'
 #' @param org_id The value is your orgId.
 #' @param campaign_id The unique identifier for the campaign.
@@ -31,4 +31,5 @@ apl_get_ad_group_report <- function(
     bind_rows()
 
   return(result)
+
 }

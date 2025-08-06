@@ -29,8 +29,7 @@ apl_make_request <- function(
     req_error(
       is_error = is_error,
       body     = error_body
-    ) %>%
-    req_retry(max_tries = 8)
+    )
 
   # payload
   if (!is.null(selector)) {
@@ -245,6 +244,28 @@ apl_parse_ad_group_report <- function(resp) {
 
 }
 
+apl_parse_keyword_report <- function(resp) {
+
+  content <- resp_body_json(resp)
+
+  res <- tibble(data = content$data$reportingDataResponse$row) %>%
+    unnest_wider('data') %>%
+    unnest_wider('metadata') %>%
+    unnest_longer('granularity') %>%
+    unnest_wider('granularity')
+
+  fields <- c('bidAmount')
+
+  for (field in fields) {
+    if (!field %in% names(res)) next
+    res <- unnest_wider(res, all_of(field), names_sep = "_")
+  }
+
+  res <- rename_with(res, .fn = to_snake_case)
+  res
+
+}
+
 apl_parsers <- list(
   simple          = apl_simple_parser,
   campaigns       = apl_parse_campaigns,
@@ -252,5 +273,6 @@ apl_parsers <- list(
   ads             = apl_parse_ads,
   user_acl_parser = apl_user_acl_parser,
   campaign_report = apl_parse_campaign_report,
-  ad_group_report = apl_parse_ad_group_report
+  ad_group_report = apl_parse_ad_group_report,
+  keyword_report  = apl_parse_keyword_report
 )
