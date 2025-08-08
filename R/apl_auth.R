@@ -58,8 +58,31 @@ apl_auth <- function(
   dir.create(cache_path, showWarnings = FALSE, recursive = TRUE)
   jwt_cache_file <- file.path(cache_path, paste0(account_name, "_jwt.rds"))
   access_token_file <- file.path(cache_path, paste0(account_name, "_access_token.rds"))
+  auth_data_file <- file.path(cache_path, paste0(account_name, "_client_credential.yml"))
 
-  # 1. JWT --------------------------------------------------
+
+  # 1. Client creddential -----------------------------------
+  if (file.exists(auth_data_file)) {
+    auth_data <- yaml::read_yaml(auth_data_file)
+  } else {
+    auth_data <- list(
+      client_id        = client_id,
+      team_id          = team_id,
+      key_id           = key_id,
+      private_key_path = private_key_path
+    )
+    yaml::write_yaml(
+      auth_data,
+      file = auth_data_file
+    )
+  }
+
+  apl_set_client_id(auth_data$client_id)
+  apl_set_team_id(auth_data$team_id)
+  apl_set_key_id(auth_data$key_id)
+  apl_set_private_key_path(auth_data$private_key_path)
+
+  # 2. JWT --------------------------------------------------
   jwt_data <- NULL
   if (file.exists(jwt_cache_file)) {
     jwt_data <- readRDS(jwt_cache_file)
@@ -84,7 +107,7 @@ apl_auth <- function(
 
   }
 
-  # 2. Access Token --------------------------------------------------
+  # 3. Access Token --------------------------------------------------
   token_data <- NULL
   if (file.exists(access_token_file)) {
 

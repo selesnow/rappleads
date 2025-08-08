@@ -2,7 +2,7 @@
 % Please edit documentation in R/apl_get_campaigns.R
 \name{apl_get_campaigns}
 \alias{apl_get_campaigns}
-\title{Get all Campaigns}
+\title{Get All Campaigns}
 \usage{
 apl_get_campaigns(org_id = apl_get_me_details()$parentOrgId)
 }
@@ -13,5 +13,5 @@ apl_get_campaigns(org_id = apl_get_me_details()$parentOrgId)
 tibble with campaigns
 }
 \description{
-Get all Campaigns
+Get All Campaigns
 }

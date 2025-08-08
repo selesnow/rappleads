@@ -17,7 +17,7 @@ apl_set_timezone <- function(timezone) {
 #' @export
 #'
 apl_set_client_id <- function(client_id) {
-  Sys.setenv('APL_CLIENT_ID')
+  Sys.setenv('APL_CLIENT_ID' = client_id)
 }
 
 #' Set Team ID
@@ -28,7 +28,7 @@ apl_set_client_id <- function(client_id) {
 #' @export
 #'
 apl_set_team_id <- function(team_id) {
-  Sys.setenv('APL_TEAM_ID')
+  Sys.setenv('APL_TEAM_ID' = team_id)
 }
 
 #' Set KeyID
@@ -39,7 +39,7 @@ apl_set_team_id <- function(team_id) {
 #' @export
 #'
 apl_set_key_id <- function(key_id) {
-  Sys.setenv('APL_KEY_ID')
+  Sys.setenv('APL_KEY_ID' = key_id)
 }
 
 #' Set Privat Key Path
@@ -50,7 +50,7 @@ apl_set_key_id <- function(key_id) {
 #' @export
 #'
 apl_set_private_key_path <- function(private_key_path) {
-  Sys.setenv('APL_PRIVATE_KEY_PATH')
+  Sys.setenv('APL_PRIVATE_KEY_PATH' = private_key_path)
 }
 
 #' Set Apple Ads Account Name
@@ -61,5 +61,18 @@ apl_set_private_key_path <- function(private_key_path) {
 #' @export
 #'
 apl_set_account_name <- function(account_name) {
-  Sys.setenv('APL_ACCOUNT_NAME')
+  Sys.setenv('APL_ACCOUNT_NAME' = account_name)
+}
+
+#' Get List of Auth Cached Accounts
+#'
+#' @returns character vector with accounts name
+#' @export
+#'
+apl_get_auth_account_list <- function() {
+
+  dir(rappdirs::site_data_dir("rappleads")) %>%
+    stringr::str_remove_all('_jwt.rds|_access_token.rds|_client_credential.yml') %>%
+    unique()
+
 }

@@ -55,20 +55,38 @@ openssl ec -in private-key.pem -pubout -out public-key.pem
 
 Далее для авторизации вам необходимо создать переменные среды:
 
-* APL_CLIENT_ID=SEARCHADS.*******************************
-* APL_TEAM_ID=SEARCHADS.*******************************
-* APL_KEY_ID=2864fa90-****-4****-****-****
-* APL_PRIVATE_KEY_PATH=C:/Users/User/private-key.pem
-* APL_ACCOUNT_NAME=AccountName
+* `APL_CLIENT_ID=SEARCHADS.*******************************`
+* `APL_TEAM_ID=SEARCHADS.*******************************`
+* `APL_KEY_ID=2864fa90-****-*****-****-****`
+* `APL_PRIVATE_KEY_PATH=C:/Users/User/private-key.pem`
+* `APL_ACCOUNT_NAME=AccountName`
 
 Эти данные будут использоваться для создания и обновления кеша учётных данных.
 
-## Example
+## Запрос аккаунтов
 
-This is a basic example which shows you how to solve a common problem:
+Общие данные по своему пользователю и доступным ему рекламным аккаунтам вы можете получить с помощью следующих функций:
 
-``` r
-library(rappleads)
-## basic example code
-```
+* `apl_get_me_details()` - Id пользователя и основной организации
+* `apl_get_user_acl()` - Получает роли и организации, к которым есть доступ.
 
+## Запрос объектов рекламных кабинетов
+
+* `apl_get_campaigns()` - Список рекламных кампаний
+* `apl_get_ad_groups()` - Список групп объявллений
+* `apl_get_ads()` - Список объявлений
+* `apl_get_creatives()` - Список креативов
+
+## Запрос отчётов
+
+* `apl_get_campaign_report()` - Отчёт с группировкой по рекламным кампаниям
+* `apl_get_ad_group_report()` - Отчёт с группировкой по группам объявлений
+* `apl_get_keyword_report()` - Отчёт с группировкой по ключевым словам
+* `apl_get_search_term_report()` -  Отчёт с группировкой по поисковым условиям
+
+## Author
+Alexey Seleznev, Head of analytics dept. at [Netpeak](https://netpeak.us/)
+<Br>Telegram Channel: [R4marketing](https://t.me/R4marketing)
+<Br>email: selesnow@gmail.com
+<Br>facebook: [facebook.com/selesnow](https://www.facebook.com/selesnow)
+<Br>blog: [alexeyseleznev.wordpress.com](https://alexeyseleznev.wordpress.com/)
