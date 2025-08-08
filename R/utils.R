@@ -1,3 +1,13 @@
+# В этом файле собраны функции для генерации запроса, отправки, и парсинга результата
+## Генерация запроса
+## apl_make_request - основная функция для генерации запросов
+### is_error - функция определяет был ли ответ от API ошибкой
+### error_body - Достаёт сообщение об ошибке
+### next_req_post, next_req_get - Функции для реализации пагинации, next_req_get - реализует пагинацию через payload в post запросах, а next_req_get через параметры в get запросах
+### make_selector - функция создаёт payload для POST запросов
+## Парсинг запросов
+### Функции apl_parse_*() предназначены для парсинга результата
+
 # main request build function ---------------------------------------------
 #' Make API request
 #'
@@ -15,7 +25,8 @@ apl_make_request <- function(
 ) {
 
   # request
-  req <- request("https://api.searchads.apple.com/api/v5/") %>%
+  req <- request("https://api.searchads.apple.com/api/") %>%
+    req_url_path_append(getOption('apl.api_version')) %>%
     req_url_path_append(endpoint) %>%
     req_headers(
       Authorization  = paste("Bearer", apl_auth()),
@@ -46,11 +57,12 @@ apl_make_request <- function(
     resps <- req_perform_iterative(
       req,
       next_req = next_req,
-      max_reqs = Inf
+      max_reqs = Inf,
+      progress = FALSE
     ),
     when      = "Could not evaluate cli|invalid format",
     max_tries = 10,
-    interval  = 1
+    interval  = 3
   )
 
   # parsing
@@ -67,6 +79,7 @@ make_selector <- function(
     end_date    = Sys.Date() - 1,
     granularity = c('DAILY', 'HOURLY', 'WEEKLY', 'MONTHLY'),
     sort_field  = "startTime",
+    time_zone   = 'UTC',
     part        = NULL
   ) {
 
@@ -76,6 +89,8 @@ make_selector <- function(
     startTime   = start_date,
     endTime     = end_date,
     granularity = granularity,
+    returnRecordsWithNoMetrics = FALSE,
+    timeZone    = time_zone,
     selector = list(
       fields  = NULL,
       orderBy = list(
@@ -149,6 +164,16 @@ next_req_post <- function(resp, req) {
   )
 }
 
+## pagination page counter
+resp_pages_num <- function(resp) {
+  pag <- resp_body_json(resp)$pagination
+  total <- pag$totalResults %||% 0
+  per   <- pag$itemsPerPage %||% 1
+  # если пусто — хотя бы одну итерацию
+  pages <- max(1L, ceiling(total / per))
+  return(pages)
+}
+
 # Parsers -----------------------------------------------------------------
 apl_simple_parser <- function(resp) {
 
@@ -204,6 +229,8 @@ apl_parse_campaign_report <- function(resp) {
 
   content <- resp_body_json(resp)
 
+  if (length(content$data$reportingDataResponse$row) == 0) return(tibble())
+
   res <- tibble(data = content$data$reportingDataResponse$row) %>%
     unnest_wider('data') %>%
     unnest_wider('metadata') %>%
@@ -225,6 +252,8 @@ apl_parse_campaign_report <- function(resp) {
 apl_parse_ad_group_report <- function(resp) {
 
   content <- resp_body_json(resp)
+
+  if (length(content$data$reportingDataResponse$row) == 0) return(tibble())
 
   res <- tibble(data = content$data$reportingDataResponse$row) %>%
     unnest_wider('data') %>%
@@ -248,6 +277,8 @@ apl_parse_keyword_report <- function(resp) {
 
   content <- resp_body_json(resp)
 
+  if (length(content$data$reportingDataResponse$row) == 0) return(tibble())
+
   res <- tibble(data = content$data$reportingDataResponse$row) %>%
     unnest_wider('data') %>%
     unnest_wider('metadata') %>%
@@ -266,13 +297,49 @@ apl_parse_keyword_report <- function(resp) {
 
 }
 
+apl_parse_ad_report <- function(resp) {
+
+  content <- resp_body_json(resp)
+
+  if (length(content$data$reportingDataResponse$row) == 0) return(tibble())
+
+  res <- tibble(data = content$data$reportingDataResponse$row) %>%
+    unnest_wider('data') %>%
+    unnest_wider('metadata') %>%
+    unnest_longer('granularity') %>%
+    unnest_wider('granularity') %>%
+    rename_with(.fn = to_snake_case)
+
+  res
+
+}
+
+apl_parse_search_term_report <- function(resp) {
+
+  content <- resp_body_json(resp)
+
+  if (length(content$data$reportingDataResponse$row) == 0) return(tibble())
+
+  res <- tibble(data = content$data$reportingDataResponse$row) %>%
+    unnest_wider('data') %>%
+    unnest_wider('metadata') %>%
+    unnest_longer('granularity') %>%
+    unnest_wider('granularity') %>%
+    rename_with(.fn = to_snake_case)
+
+  res
+
+}
+
 apl_parsers <- list(
-  simple          = apl_simple_parser,
-  campaigns       = apl_parse_campaigns,
-  ad_groups       = apl_parse_ad_groups,
-  ads             = apl_parse_ads,
-  user_acl_parser = apl_user_acl_parser,
-  campaign_report = apl_parse_campaign_report,
-  ad_group_report = apl_parse_ad_group_report,
-  keyword_report  = apl_parse_keyword_report
+  simple             = apl_simple_parser,
+  campaigns          = apl_parse_campaigns,
+  ad_groups          = apl_parse_ad_groups,
+  ads                = apl_parse_ads,
+  user_acl_parser    = apl_user_acl_parser,
+  campaign_report    = apl_parse_campaign_report,
+  ad_group_report    = apl_parse_ad_group_report,
+  keyword_report     = apl_parse_keyword_report,
+  ad_report          = apl_parse_ad_report,
+  search_term_report = apl_parse_search_term_report
 )

@@ -1,4 +1,4 @@
-#' Get Keyword-Level Reports
+#' Get Ad-Level Reports
 #'
 #' @param org_id The value is your orgId.
 #' @param campaign_id The unique identifier for the campaign.
@@ -6,10 +6,10 @@
 #' @param end_date End reporting date
 #' @param granularity The report data organized by hour, day, week, and month.
 #'
-#' @returns tibble with keyword report
+#' @returns tibble ad report
 #' @export
 #'
-apl_get_keyword_report <- function(
+apl_get_ad_report <- function(
     org_id      = apl_get_me_details()$parentOrgId,
     campaign_id = apl_get_campaigns()$id,
     start_date  = Sys.Date() - 8,
@@ -21,10 +21,10 @@ apl_get_keyword_report <- function(
     campaign_id,
     purrr::safely(\(cid) {
       apl_make_request(
-        endpoint = stringr::str_glue('reports/campaigns/{cid}/keywords'),
+        endpoint = stringr::str_glue('reports/campaigns/{cid}/ads'),
         org_id   = org_id,
-        selector = make_selector(start_date, end_date, granularity, sort_field = 'keyword'),
-        parser   = apl_parsers$keyword_report
+        selector = make_selector(start_date = start_date,end_date =  end_date,granularity =  granularity, sort_field = "adGroupId"),
+        parser   = apl_parsers$ad_report
       )
     }
     )
@@ -32,12 +32,6 @@ apl_get_keyword_report <- function(
 
   result <- purrr::transpose(result)
   errors <- result$error
-
-  # check for errors
-  for (error in errors) {
-    if (is.null(error)) next
-    cli::cli_alert_warning(resp_body_json(error$resp)$error$errors[[1]]$message)
-  }
 
   # collect result
   result <- result$result %>%

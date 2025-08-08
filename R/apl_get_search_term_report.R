@@ -1,4 +1,4 @@
-#' Get Keyword-Level Reports
+#' Get Search Term-Level Reports
 #'
 #' @param org_id The value is your orgId.
 #' @param campaign_id The unique identifier for the campaign.
@@ -6,10 +6,10 @@
 #' @param end_date End reporting date
 #' @param granularity The report data organized by hour, day, week, and month.
 #'
-#' @returns tibble with keyword report
+#' @returns tibble search term report
 #' @export
 #'
-apl_get_keyword_report <- function(
+apl_get_search_term_report <- function(
     org_id      = apl_get_me_details()$parentOrgId,
     campaign_id = apl_get_campaigns()$id,
     start_date  = Sys.Date() - 8,
@@ -21,10 +21,10 @@ apl_get_keyword_report <- function(
     campaign_id,
     purrr::safely(\(cid) {
       apl_make_request(
-        endpoint = stringr::str_glue('reports/campaigns/{cid}/keywords'),
+        endpoint = stringr::str_glue('reports/campaigns/{cid}/searchterms'),
         org_id   = org_id,
-        selector = make_selector(start_date, end_date, granularity, sort_field = 'keyword'),
-        parser   = apl_parsers$keyword_report
+        selector = make_selector(start_date, end_date, granularity, sort_field = "impressions"),
+        parser   = apl_parsers$search_term_report
       )
     }
     )
