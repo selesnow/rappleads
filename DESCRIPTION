@@ -1,5 +1,5 @@
 Package: rappleads
-Title: Get data from 'Apple Ads Campaign Management API'
+Title: Get Data From 'Apple Ads Campaign Management API'
 Version: 0.1.0
 Authors@R: 
     c(person(given  = "Alexey",
