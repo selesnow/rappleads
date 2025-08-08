@@ -2,7 +2,7 @@
 
   # options
   op <- options()
-  op.gads <- list(C   = 'ORTZ',
+  op.gads <- list(apl.time_zone   = 'ORTZ',
                   apl.api_version = 'v5')
 
   toset <- !(names(op.gads) %in% names(op))

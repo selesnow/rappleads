@@ -188,7 +188,7 @@ apl_user_acl_parser <- function(resp) {
   content <- resp_body_json(resp)
 
   tibble(data = content$data) %>%
-    unnest_wider(data) %>%
+    unnest_wider('data') %>%
     rename_with(.fn = to_snake_case)
 
 }
@@ -198,9 +198,9 @@ apl_parse_campaigns <- function(resp) {
   content <- resp_body_json(resp)
 
   tibble(data = content$data) %>%
-    unnest_wider(data) %>%
-    unnest_wider(budgetAmount, names_sep = '_') %>%
-    unnest_wider(dailyBudgetAmount, names_sep = '_') %>%
+    unnest_wider('data') %>%
+    unnest_wider('budgetAmount', names_sep = '_') %>%
+    unnest_wider('dailyBudgetAmount', names_sep = '_') %>%
     rename_with(.fn = to_snake_case)
 
 }
@@ -210,8 +210,8 @@ apl_parse_ad_groups <- function(resp) {
   content <- resp_body_json(resp)
 
   tibble(data = content$data) %>%
-    unnest_wider(data) %>%
-    unnest_wider(defaultBidAmount, names_sep = '_') %>%
+    unnest_wider('data') %>%
+    unnest_wider('defaultBidAmount', names_sep = '_') %>%
     rename_with(.fn = to_snake_case)
 
 }
@@ -221,7 +221,7 @@ apl_parse_ads <- function(resp) {
   content <- resp_body_json(resp)
 
   tibble(data = content$data) %>%
-    unnest_wider(data)
+    unnest_wider('data')
 
 }
 
@@ -230,7 +230,7 @@ apl_parse_creatives <- function(resp) {
   content <- resp_body_json(resp)
 
   tibble(data = content$data) %>%
-    unnest_wider(data)
+     unnest_wider('data')
 
 }
 
