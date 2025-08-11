@@ -80,17 +80,19 @@ make_selector <- function(
     granularity = c('DAILY', 'HOURLY', 'WEEKLY', 'MONTHLY'),
     sort_field  = "startTime",
     time_zone   = 'UTC',
+    group_by    = NULL,
     part        = NULL
   ) {
 
   granularity <- match.arg(granularity, several.ok =  FALSE)
 
   selector <- list(
-    startTime   = start_date,
-    endTime     = end_date,
-    granularity = granularity,
+    startTime                  = start_date,
+    endTime                    = end_date,
+    granularity                = granularity,
     returnRecordsWithNoMetrics = FALSE,
-    timeZone    = time_zone,
+    timeZone                   = time_zone,
+    groupBy                    = list(group_by),
     selector = list(
       fields  = NULL,
       orderBy = list(
