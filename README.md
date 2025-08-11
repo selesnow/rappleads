@@ -84,6 +84,11 @@ openssl ec -in private-key.pem -pubout -out public-key.pem
 * `apl_get_keyword_report()` - Отчёт с группировкой по ключевым словам
 * `apl_get_search_term_report()` -  Отчёт с группировкой по поисковым условиям
 
+Данные в отчётах можно получать в разных часовых поясах, либо в UTC, либо в установленном на уровне организации, менять значение часового пояса можно с помощью функции `apl_set_timezone()`:
+
+* ORTZ - Часовой пояс выставленный на уровне организации
+* UTC - Часовой пояса UTC
+
 ## Author
 Alexey Seleznev, Head of analytics dept. at [Netpeak](https://netpeak.us/)
 <Br>Telegram Channel: [R4marketing](https://t.me/R4marketing)

@@ -93,7 +93,7 @@ make_selector <- function(
     end_date    = Sys.Date() - 1,
     granularity = c('DAILY', 'HOURLY', 'WEEKLY', 'MONTHLY'),
     sort_field  = "startTime",
-    time_zone   = 'UTC',
+    time_zone   = getOption('apl.time_zone'),
     group_by    = NULL,
     part        = NULL
   ) {
