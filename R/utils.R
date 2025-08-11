@@ -74,6 +74,22 @@ apl_make_request <- function(
 
 
 # make_request helpers ----------------------------------------------------
+#' Make request selector
+#'
+#' @details
+#' See [API Documentation](https://developer.apple.com/documentation/apple_ads/reportingrequest)
+#'
+#'
+#' @param start_date start report date
+#' @param end_date end report date
+#' @param granularity The report data organized by hour, day, week, and month.
+#' @param sort_field Specify a field name and grouping to sort the records by ASCENDING or DESCENDING.
+#' @param time_zone You set the default timeZone during account creation through the Apple Search Ads UI. ORTZ
+#' @param group_by Use the groupBy field to group responses by selected dimensions. If groupBy specifies age, gender, and geodimensions
+#' @param part Part of selector
+#'
+#' @returns
+#'
 make_selector <- function(
     start_date  = Sys.Date() - 8,
     end_date    = Sys.Date() - 1,

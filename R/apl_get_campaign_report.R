@@ -3,6 +3,7 @@
 #' @param org_id The value is your orgId.
 #' @param start_date Start reporting date
 #' @param end_date End reporting date
+#' @param group_by Use the groupBy field to group responses by selected dimensions. If groupBy specifies age, gender, and geodimensions
 #' @param granularity The report data organized by hour, day, week, and month.
 #'
 #' @returns tibble with report data
