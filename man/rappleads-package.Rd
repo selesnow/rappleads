@@ -4,9 +4,9 @@
 \name{rappleads-package}
 \alias{rappleads}
 \alias{rappleads-package}
-\title{rappleads: What the Package Does (One Line, Title Case)}
+\title{rappleads: Get Data From 'Apple Ads Campaign Management API'}
 \description{
-What the package does (one paragraph).
+Load data from Apple Ads Accounts using 'Apple Ads Campaign Management API' \url{https://developer.apple.com/documentation/apple_ads}
 }
 \seealso{
 Useful links:
@@ -17,7 +17,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com}
+\strong{Maintainer}: Alexey Seleznev \email{selesnow@gmail.com} (\href{https://orcid.org/0000-0003-0410-7385}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Netpeak [copyright holder]
+}
 
 }
 \keyword{internal}

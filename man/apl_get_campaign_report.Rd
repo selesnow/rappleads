@@ -8,6 +8,7 @@ apl_get_campaign_report(
   org_id = apl_get_me_details()$parentOrgId,
   start_date = Sys.Date() - 8,
   end_date = Sys.Date() - 1,
+  group_by = NULL,
   granularity = c("DAILY", "HOURLY", "WEEKLY", "MONTHLY")
 )
 }
@@ -17,6 +18,8 @@ apl_get_campaign_report(
 \item{start_date}{Start reporting date}
 
 \item{end_date}{End reporting date}
+
+\item{group_by}{Use the groupBy field to group responses by selected dimensions. If groupBy specifies age, gender, and geodimensions}
 
 \item{granularity}{The report data organized by hour, day, week, and month.}
 }

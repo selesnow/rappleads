@@ -88,8 +88,6 @@ apl_make_request <- function(
 #' @param group_by Use the groupBy field to group responses by selected dimensions. If groupBy specifies age, gender, and geodimensions
 #' @param part Part of selector
 #'
-#' @returns
-#'
 make_selector <- function(
     start_date  = Sys.Date() - 8,
     end_date    = Sys.Date() - 1,

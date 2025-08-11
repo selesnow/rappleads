@@ -4,6 +4,7 @@
 #' @param campaign_id The unique identifier for the campaign.
 #' @param start_date Start reporting date
 #' @param end_date End reporting date
+#' @param group_by Use the groupBy field to group responses by selected dimensions. If groupBy specifies age, gender, and geodimensions
 #' @param granularity The report data organized by hour, day, week, and month.
 #'
 #' @returns tibble ad report
@@ -14,6 +15,7 @@ apl_get_ad_report <- function(
     campaign_id = apl_get_campaigns()$id,
     start_date  = Sys.Date() - 8,
     end_date    = Sys.Date() - 1,
+    group_by    = NULL,
     granularity = c('DAILY', 'HOURLY', 'WEEKLY', 'MONTHLY')
 ) {
 
@@ -23,7 +25,12 @@ apl_get_ad_report <- function(
       apl_make_request(
         endpoint = stringr::str_glue('reports/campaigns/{cid}/ads'),
         org_id   = org_id,
-        selector = make_selector(start_date = start_date,end_date =  end_date,granularity =  granularity, sort_field = "adGroupId"),
+        selector = make_selector(
+          start_date  = start_date,
+          end_date    =  end_date,
+          granularity = granularity,
+          sort_field  = "adGroupId",
+          group_by    = group_by),
         parser   = apl_parsers$ad_report
       )
     }
